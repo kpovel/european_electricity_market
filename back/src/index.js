@@ -1,17 +1,20 @@
-/**
- * @param {string}  foo - A string param.
- * @returns {string} This is the result
- */
-
+import "./env.js";
+import { dbClient, initDbSchema } from "./db.js";
 import express from "express";
-const app = express();
-const PORT = 42069;
 
-app.get("/", (_req, res) => {
-  res.send("Hello World!");
-  console.log("testies");
+initDbSchema();
+
+export const PORT = 42069;
+export const app = express();
+
+app.get("/provider", async (_req, res) => {
+  const result = await dbClient.execute(`
+select id, name, country, market_share, renewable_energy_percentage, yearly_revenue
+from electricity;`);
+  const rows = result.rows;
+  res.send(rows);
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`);
+  console.log(`European Electricity Market app listening on port ${PORT}`);
 });
