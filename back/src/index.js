@@ -104,6 +104,66 @@ app.delete("/provider", async (req, res) => {
   res.status(200).send();
 });
 
+app.put("/provider/:id", async (req, res) => {
+  const providerId = req.params.id;
+
+  const body = req.body;
+  if (!body) {
+    res
+      .status(415)
+      .send(
+        "Provide name, country, market_share, renewable_energy_percentage and yearly_revenue in a json format",
+      );
+    return;
+  }
+
+  const json = parseJSON(body);
+
+  if (json.err !== null) {
+    res.status(400).send("Can't parse json");
+    return;
+  }
+
+  const {
+    name,
+    country,
+    market_share,
+    renewable_energy_percentage,
+    yearly_revenue,
+  } = json.ok;
+
+  if (
+    typeof name !== "string" ||
+    typeof country !== "string" ||
+    typeof market_share !== "number" ||
+    typeof renewable_energy_percentage !== "number" ||
+    typeof yearly_revenue !== "number"
+  ) {
+    res.status(400).send("Invalid data format");
+    return;
+  }
+
+  dbClient.execute({
+    sql: `update electricity
+    set name                        = :name,
+        country                     = :country,
+        market_share                = :market_share,
+        renewable_energy_percentage = :renewable_energy_percentage,
+        yearly_revenue              = :yearly_revenue
+    where id = :id;`,
+    args: {
+      name,
+      country,
+      market_share,
+      renewable_energy_percentage,
+      yearly_revenue,
+      id: providerId,
+    },
+  });
+
+  res.status(200).send();
+});
+
 app.listen(PORT, () => {
   console.log(`European Electricity Market app listening on port ${PORT}`);
 });
