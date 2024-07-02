@@ -1,6 +1,7 @@
 import "./env.js";
 import { dbClient, initDbSchema } from "./db.js";
 import express from "express";
+import { parseJSON } from "./utils/parseJSON.js";
 
 initDbSchema();
 
@@ -78,17 +79,30 @@ values (:name, :country, :market_share, :renewable_energy_percentage, :yearly_re
   return;
 });
 
-/**
- * @param {string} json
- * @returns {Result<any, string>}
- */
-export function parseJSON(json) {
-  try {
-    return { ok: JSON.parse(json), err: null };
-  } catch (e) {
-    return { ok: null, err: "can't parse json" };
+app.delete("/provider", async (req, res) => {
+  const providerId = Number(req.body);
+  if (!providerId) {
+    res.status(400).send("Provide provider id");
+    return;
   }
-}
+
+  const providers = await dbClient.execute({
+    sql: "select id from electricity where id = :providerId",
+    args: { providerId },
+  });
+
+  if (providers.rows.length === 0) {
+    res.status(400).send("There are no providers with this id");
+    return;
+  }
+
+  await dbClient.execute({
+    sql: "delete from electricity where id = :providerId",
+    args: { providerId },
+  });
+
+  res.status(200).send();
+});
 
 app.listen(PORT, () => {
   console.log(`European Electricity Market app listening on port ${PORT}`);
