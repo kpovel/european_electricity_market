@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "./Provider";
+import { CreateProvider } from "./provider-create/CreateProvider";
 
 const router = createBrowserRouter([
   {
@@ -10,8 +11,8 @@ const router = createBrowserRouter([
     element: <Provider />,
   },
   {
-    path: "/create",
-    element: <div>create provider</div>,
+    path: "/provider/create",
+    element: <CreateProvider />,
   },
   {
     path: "/update/:id",
