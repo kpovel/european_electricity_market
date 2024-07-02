@@ -9,6 +9,12 @@ export const PORT = 42069;
 export const app = express();
 app.use(express.raw({ type: "*/*" }));
 
+app.use((_req, res, next) => {
+  res.append("Access-Control-Allow-Origin", "*");
+  res.append("Access-Control-Allow-Methods", "*");
+  next();
+});
+
 app.get("/provider", async (_req, res) => {
   const result = await dbClient.execute(`
 select id, name, country, market_share, renewable_energy_percentage, yearly_revenue
@@ -96,8 +102,8 @@ values (:name, :country, :market_share, :renewable_energy_percentage, :yearly_re
   return;
 });
 
-app.delete("/provider", async (req, res) => {
-  const providerId = Number(req.body);
+app.delete("/provider/:id", async (req, res) => {
+  const providerId = Number(req.params.id);
   if (!providerId) {
     res.status(400).send("Provide provider id");
     return;
