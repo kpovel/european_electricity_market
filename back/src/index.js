@@ -17,6 +17,23 @@ from electricity;`);
   res.send(rows);
 });
 
+app.get("/provider/:id", async (req, res) => {
+  const providerId = req.params.id;
+  const result = await dbClient.execute({
+    sql: `select id, name, country, market_share, renewable_energy_percentage, yearly_revenue
+from electricity
+where id = :id;`,
+    args: { id: providerId },
+  });
+
+  if (result.rows.length === 0) {
+    res.status(400).send("There are no such provider");
+    return;
+  }
+
+  res.send(result.rows[0]);
+});
+
 app.post("/provider", async (req, res) => {
   const body = req.body;
   if (!body) {
