@@ -27,6 +27,10 @@ cp .env.example .env
 vim .env
 ```
 
+> [!NOTE]
+> Enter `DATABASE_URL` in a format:
+> `DATABASE_URL=file:path/to/database`
+
 4. Run Back-end server
 
 ```bash
