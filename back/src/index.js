@@ -166,6 +166,16 @@ app.put("/provider/:id", async (req, res) => {
     return;
   }
 
+  const provider = await dbClient.execute({
+    sql: "select id from electricity where name = :name",
+    args: { name },
+  });
+
+  if (provider.rows.length) {
+    res.status(409).send("Provider with this name already exists");
+    return;
+  }
+
   dbClient.execute({
     sql: `update electricity
     set name                        = :name,
