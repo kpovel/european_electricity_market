@@ -63,7 +63,7 @@ export function UpdateProvider() {
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Create Electricity Provider</h1>
+        <h1 className="text-2xl font-bold">Update Electricity Provider</h1>
       </div>
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div className="space-y-2">
